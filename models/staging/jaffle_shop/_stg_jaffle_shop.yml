@@ -1,0 +1,35 @@
+models:
+  - name: stg_jaffle_shop__customers
+    description: One row per customer, with customer attributes renamed from the raw Jaffle Shop application data for consistent downstream use.
+    columns:
+      - name: customer_id
+        description: Primary key for the customer, renamed from the source `id` field.
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Customer's first name as recorded in the Jaffle Shop application.
+      - name: last_name
+        description: Customer's last name as recorded in the Jaffle Shop application.
+
+
+  - name: stg_jaffle_shop__orders
+    description: One order per row
+    columns:
+      - name: order_id
+        description: Primary key for the orders table
+        data_tests:
+          - unique
+          - not_null
+      - name: order_status
+        description: "{{ doc('order_status') }}"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['completed', 'shipped', 'placed', 'return_pending', 'returned']
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__customers')
+                field: customer_id
